@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: Flask-Voice-API
+    envVars:
+      - key: PORT
+        value: "10000"

@@ -5,6 +5,7 @@ import librosa
 import joblib
 from flask import Flask, request, jsonify
 
+from dotenv import load_dotenv
 app = Flask(__name__)
 
 # ✅ Load trained model
@@ -80,6 +81,7 @@ def predict():
         return jsonify({"error": f"🔥 Error processing request: {str(e)}"}), 500
 
 # ✅ Ensure the app runs on a proper port
+load_dotenv()
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Use PORT from environment or default to 5000
-    app.run(host="0.0.0.0", port=port)
+    port = int(os.environ.get("PORT", 10000))  # Use PORT from environment or default to 5000
+    app.run(host="0.0.0.0", port=port, debug=True)
