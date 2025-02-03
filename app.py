@@ -29,13 +29,11 @@ def extract_features(audio_data, sr):
         chroma = librosa.feature.chroma_stft(y=audio_data, sr=sr)
         mel = librosa.feature.melspectrogram(y=audio_data, sr=sr)
 
-        # Taking mean values to reduce dimensionality
         mfccs_mean = np.mean(mfccs, axis=1)
         chroma_mean = np.mean(chroma, axis=1)
         mel_mean = np.mean(mel, axis=1)
 
         return np.hstack([mfccs_mean, chroma_mean, mel_mean])
-    
     except Exception as e:
         print(f"❌ Error extracting features: {e}")
         return None
@@ -45,21 +43,22 @@ def extract_features(audio_data, sr):
 def home():
     return jsonify({"message": "🚀 Voice Pathology Detection API is running!"})
 
-# ✅ Prediction route (NO CORS, DIRECT ANALYSIS)
+# ✅ Prediction route (Improved error handling)
 @app.route("/predict", methods=["POST"])
 def predict():
     if model is None:
         return jsonify({"error": "Model not loaded. Please check your deployment."}), 500
 
     try:
-        # ✅ Get the uploaded audio file
+        # ✅ Ensure file is uploaded
         if "file" not in request.files:
+            print("❌ No file received in request")
             return jsonify({"error": "❌ No file uploaded"}), 400
 
         file = request.files["file"]
         audio, sr = librosa.load(io.BytesIO(file.read()), sr=22050)
 
-        # ✅ Extract features
+        # ✅ Ensure features are extracted
         features = extract_features(audio, sr)
         if features is None:
             return jsonify({"error": "❌ Feature extraction failed."}), 500
@@ -75,11 +74,12 @@ def predict():
         result = "⚠️ Pathological Voice Detected!" if prediction == 1 else "✅ Healthy Voice"
 
         return jsonify({"prediction": result})
-    
+
     except Exception as e:
+        print(f"🔥 Error processing request: {str(e)}")
         return jsonify({"error": f"🔥 Error processing request: {str(e)}"}), 500
 
-# ✅ Ensure the app runs on a proper port (important for deployment)
+# ✅ Ensure the app runs on a proper port
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # Use PORT from environment or default to 5000
     app.run(host="0.0.0.0", port=port, debug=True)
