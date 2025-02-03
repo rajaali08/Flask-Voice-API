@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load trained SVM model
-model = joblib.load("decision_tree_model.pkl")  # Ensure this file exists
+model = joblib.load("decision_tree.pkl")  # Ensure this file exists
 
 # Load scaler if used
 try:
