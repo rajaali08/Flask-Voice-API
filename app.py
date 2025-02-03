@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load trained SVM model
-model = joblib.load("svm_model.pkl")  # Ensure this file exists
+model = joblib.load("decision_tree_model.pkl")  # Ensure this file exists
 
 # Load scaler if used
 try:
@@ -32,7 +32,7 @@ def extract_features(audio_data, sr):
 
 @app.route("/")
 def home():
-    return "Voice Pathology Detection API is Running!"
+    return "Voice Pathology Detection API is fine Running!"
 
 @app.route("/predict", methods=["POST"])
 def predict():
