@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-# ✅ CORS Configuration: Allow frontend access & credentials
+# ✅ CORS Configuration: Allow frontend access with credentials
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # ✅ Load trained model
@@ -48,7 +48,7 @@ def extract_features(audio_data, sr):
 # ✅ Root route (for testing)
 @app.route("/")
 def home():
-    return "🚀 Voice Pathology Detection API is running!"
+    return jsonify({"message": "🚀 Voice Pathology Detection API is running!"})
 
 # ✅ Prediction route
 @app.route("/predict", methods=["POST"])
@@ -79,18 +79,31 @@ def predict():
         prediction = model.predict(features)[0]
         result = "⚠️ Pathological Voice Detected!" if prediction == 1 else "✅ Healthy Voice"
 
-        return jsonify({"prediction": result})
+        # ✅ Add CORS Headers to Response
+        response = jsonify({"prediction": result})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "OPTIONS,POST,GET")
+        return response
     
     except Exception as e:
-        return jsonify({"error": f"🔥 Error processing request: {str(e)}"}), 500
+        response = jsonify({"error": f"🔥 Error processing request: {str(e)}"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 500
+
+# ✅ Handle preflight requests (Fixes CORS issue for OPTIONS request)
+@app.route("/predict", methods=["OPTIONS"])
+def handle_options():
+    response = jsonify({"message": "CORS Preflight Passed!"})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "OPTIONS,POST,GET")
+    return response
 
 # ✅ Ensure the app runs on a proper port (important for deployment)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # Use PORT from environment or default to 5000
     app.run(host="0.0.0.0", port=port, debug=True)
-
-
-
 
 
 
