@@ -12,3 +12,4 @@ soundfile==0.12.1  # Required for librosa to process audio
 soxr==0.3.5  # Required by librosa
 numba==0.57.1  # Required for librosa performance
 ml-dtypes==0.3.2  # Avoids numpy conflict in scikit-learn
+gunicorn==21.2.0
