@@ -1,9 +1,14 @@
 Flask==3.1.0
-Flask_Cors==5.0.0
+Flask-Cors==4.0.0  # Downgraded for better compatibility
 joblib==1.4.2
-numpy==1.23.5
+numpy==1.23.5  # Matches with scikit-learn & librosa
 pandas==2.2.0
 librosa==0.10.2.post1
 matplotlib==3.8.3
 seaborn==0.12.2
 scikit-learn==1.5.0
+scipy==1.11.3  # Required for librosa & ML models
+soundfile==0.12.1  # Required for librosa to process audio
+soxr==0.3.5  # Required by librosa
+numba==0.57.1  # Required for librosa performance
+ml-dtypes==0.3.2  # Avoids numpy conflict in scikit-learn
